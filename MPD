@@ -1,0 +1,68 @@
+-- Table User
+CREATE TABLE User (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL,
+    club_id INT NULL
+);
+
+-- Table Club
+CREATE TABLE Club (
+    club_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    created_at DATETIME NOT NULL,
+    user_id INT NOT NULL
+);
+
+-- Table ClubCaptain
+CREATE TABLE ClubCaptain (
+    club_captain_id INT AUTO_INCREMENT PRIMARY KEY,
+    club_id INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (club_id) REFERENCES Club(club_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    UNIQUE (club_id),  -- Un club ne peut avoir qu'un seul capitaine
+    UNIQUE (user_id)   -- Un utilisateur ne peut être capitaine que d'un seul club
+);
+
+-- Table Match
+CREATE TABLE Match (
+    match_id INT AUTO_INCREMENT PRIMARY KEY,
+    date DATETIME NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    max_players INT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    is_club_match BOOLEAN NOT NULL,
+    created_at DATETIME NOT NULL,
+    team_1_id INT NOT NULL,
+    team_2_id INT NOT NULL,
+    FOREIGN KEY (team_1_id) REFERENCES Team(team_id),
+    FOREIGN KEY (team_2_id) REFERENCES Team(team_id)
+);
+
+-- Table Team
+CREATE TABLE Team (
+    team_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    club_id INT,
+    match_id INT NOT NULL,
+    captain_id INT NOT NULL,
+    user_id INT NOT NULL,
+    score INT,
+    FOREIGN KEY (club_id) REFERENCES Club(club_id),
+    FOREIGN KEY (match_id) REFERENCES Match(match_id),
+    FOREIGN KEY (captain_id) REFERENCES User(user_id)
+);
+
+-- Table TeamCaptain
+CREATE TABLE TeamCaptain (
+    team_captain_id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (team_id) REFERENCES Team(team_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    UNIQUE (team_id),  -- Une team ne peut avoir qu'un seul capitaine
+    UNIQUE (user_id)   -- Un utilisateur ne peut être capitaine que d'un seul club
+);
